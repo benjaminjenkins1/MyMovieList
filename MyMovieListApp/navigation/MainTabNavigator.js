@@ -24,7 +24,7 @@ HomeStack.navigationOptions = {
 };
 
 const ListsStack = createStackNavigator({
-  Lists: LinksScreen,
+  Lists: ListsScreen,
 });
 
 ListsStack.navigationOptions = {
@@ -32,7 +32,23 @@ ListsStack.navigationOptions = {
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
-      name={Platform.OS === 'ios' ? 'ios-list' : 'md-list'}
+      name={Platform.OS === 'ios' ? 'ios-list?' : 'md-list'}
+    />
+  ),
+};
+
+const SearchStack = createStackNavigator({
+  Search: SearchScreen,
+});
+
+SearchStack.navigationOptions = {
+  tabBarLabel: 'Search',
+  tabBarIcon: ({ focused }) => (
+    <TabBarIcon
+      focused={focused}
+      name={
+        Platform.OS === 'ios' ? 'ios-search' : 'md-search'
+      }
     />
   ),
 };
@@ -54,5 +70,6 @@ ProfileStack.navigationOptions = {
 export default createBottomTabNavigator({
   HomeStack,
   ListsStack,
+  SearchStack,
   ProfileStack,
 });
