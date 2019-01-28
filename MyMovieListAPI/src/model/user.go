@@ -55,3 +55,17 @@ func (usr *User) WriteUser() error {
 	_, err = db.Exec(queryStr, usr.Id, usr.Username, usr.LoginType, usr.Public)
 	return err
 }
+
+
+func (usr *User) UpdateLastLogin() error {
+	var err error
+	queryStr := `
+	UDPATE users SET lastLogin=NOW() WHERE id=$1
+	`
+	db, err := sql.Open("postgres", u.ConnStr())
+	if err != nil {
+		return err
+	}
+	_, err = db.Exec(queryStr, usr.Id)
+	return err
+}

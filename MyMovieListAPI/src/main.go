@@ -45,11 +45,11 @@ func main() {
 		Endpoint:     facebookOAuth2.Endpoint,
 		Scopes:       []string{"email"},
 	}
-	stateConfig := gologin.DebugOnlyCookieConfig
+	stateConfig := gologin.DefaultCookieConfig
 
-	http.HandleFunc("/user",			     		Endpoint(e.UserEndpoint,           http.MethodGet))
+	http.HandleFunc("/user",			     		Endpoint(e.UserEndpoint,           http.MethodGet ))
   http.HandleFunc("/updateuser",     	  Endpoint(e.UpdateUserEndpoint,	   http.MethodPost))
-	http.HandleFunc("/lists", 				 		Endpoint(e.ListsEndpoint,					 http.MethodGet))
+	http.HandleFunc("/lists", 				 		Endpoint(e.ListsEndpoint,					 http.MethodGet ))
 	http.HandleFunc("/addtolist", 		 		Endpoint(e.AddToListEndpoint,			 http.MethodPost))
 	http.HandleFunc("/removefromlist", 		Endpoint(e.RemoveFromListEndpoint, http.MethodPost))
   http.HandleFunc("/createlist", 		 		Endpoint(e.CreateListEndpoint,		 http.MethodPost))
@@ -70,14 +70,14 @@ func main() {
 func Endpoint(fn func(*http.Request, string) ([]byte, error), method string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
-		// check method
+		// log stuff
+		log.Printf("- %s - ENDPOINT - %s - %s", r.RemoteAddr, r.Method, r.URL)
+
+		// check method 
 		if r.Method != method {
 			w.WriteHeader(http.StatusMethodNotAllowed)
 			return
 		}
-
-		// log stuff
-		log.Printf("- %s - ENDPOINT - %s - %s", r.RemoteAddr, r.Method, r.URL)
 
 		//authenticate
 		if !isAuthenticated(w, r) {

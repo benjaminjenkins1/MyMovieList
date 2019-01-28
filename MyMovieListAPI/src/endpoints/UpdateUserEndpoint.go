@@ -9,19 +9,21 @@ import (
 )
 
 
+type UpdateRequest struct {
+	Public bool `json: "public"`
+}
+
 /*
-A user can update their profile privacy
+A user can make their profile public or private
 */
 func UpdateUserEndpoint(r *http.Request, id string) ([]byte, error) {
 	var err error
 	user, err := m.ReadUser(id)
 	u.Check(err)
-	newPublic  	:= r.FormValue("public")
-	if newPublic == "true" {
-		user.Public = true
-	} else if newPublic == "false" {
-		user.Public = false
-	}
+	updateRequest := UpdateRequest{}
+	err = json.NewDecoder(r.Body).Decode(&updateRequest)
+	u.Check(err)
+	user.Public = updateRequest.Public
 	err = user.WriteUser()
 	u.Check(err)
 	res, err := json.Marshal(user)
