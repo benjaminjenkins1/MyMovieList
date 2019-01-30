@@ -94,6 +94,7 @@ func Endpoint(fn func(*http.Request, string) ([]byte, error), method string) htt
 		// write the response
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
+			log.Println(err)
 			return
 		}
 		w.Write(res)

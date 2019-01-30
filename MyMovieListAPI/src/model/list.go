@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	_ "github.com/lib/pq"
 	u "util"
+	"log"
 )
 
 type listItem struct {
@@ -15,11 +16,12 @@ type listItem struct {
 	Status     string    `json:"status"`
 	Runtime    int		   `json:"runtime"`
 	Overview   string    `json:"overview"`
-	DateAdded  time.Time `json:"dateAdded"`
+	DateAdded  string    `json:"dateAdded"`
 }
 
 type List struct {
 	Id     int				`json:"id"`
+	Name   string 		`json:"name"`
 	Owner  string  		`json:"owner"`
 	Public bool				`json:"public"`
 	Items  []listItem `json:"items"`
@@ -36,7 +38,7 @@ Add an item to a list's Items if an item with its Id does not already eexist
 */
 func AddItems(items []listItem, l List) List {
 	for _, item := range items {
-		item.DateAdded = time.Now()
+		item.DateAdded = time.Now().String()
 	}
 	for _, item := range items {
 		exists := false
@@ -54,7 +56,7 @@ func AddItems(items []listItem, l List) List {
 
 func ReadList(id int) (List, error) {
 	queryStr := `
-	SELECT (owner, public, items) FROM lists WHERE
+	SELECT owner, name, public, items FROM lists WHERE
 	id=$1
 	`
 	db, err := sql.Open("postgres", u.ConnStr())
@@ -63,8 +65,9 @@ func ReadList(id int) (List, error) {
 	}
 	l := List{ Id: id }
 	var itemsJSON string
-	err = db.QueryRow(queryStr, id).Scan(l.Owner, l.Public, itemsJSON)
-	err = json.Unmarshal([]byte(itemsJSON), l.Items)
+	err = db.QueryRow(queryStr, id).Scan(&l.Owner, &l.Name, &l.Public, &itemsJSON)
+	err = json.Unmarshal([]byte(itemsJSON), &l.Items)
+	log.Println(l.Name)
 	return l, err
 }
 
@@ -94,39 +97,42 @@ Insert a new list into the database with a unique id and any items the list stru
 List is always private by default
 */
 func (l List) InsertAsNewList() error {
-	var queryStr string
 
-	if l.Items == nil {
-
-		queryStr = `
-		INSERT INTO lists (owner) VALUES
-		($1)
-		`
-		db, err := sql.Open("postgres", u.ConnStr())
-		if err != nil {
-			return err
-		}
-		_, err = db.Exec(queryStr, l.Owner)
-		return err
-
-	} else {
-
-		queryStr := `
-		INSERT INTO lists (owner, items) VALUES
-		($1, $2)
-		`
-		itemsBytes, err := json.Marshal(l.Items)
-		if err != nil {
-			return err
-		}
-		itemsStr := string(itemsBytes[:])
-		db, err := sql.Open("postgres", u.ConnStr())
-		if err != nil {
-			return err
-		}
-		_, err = db.Exec(queryStr, l.Owner, itemsStr)
-		return err
-
-	}
+	log.Println(l.Name)
 	
+	queryStr := `
+	INSERT INTO lists (owner, name, items) VALUES
+	($1, $2, $3)
+	`
+	itemsBytes, err := json.Marshal(l.Items)
+	if err != nil {
+		return err
+	}
+	itemsStr := string(itemsBytes[:])
+	db, err := sql.Open("postgres", u.ConnStr())
+	if err != nil {
+		return err
+	}
+	_, err = db.Exec(queryStr, l.Owner, l.Name, itemsStr)
+	return err
+	
+}
+
+
+/*
+Delete a List by id
+*/
+func (l List) Delete() error {
+
+	id := l.Id
+	queryStr := `
+	DELETE FROM lists WHERE id=$1
+	`
+	db, err := sql.Open("postgres", u.ConnStr())
+		if err != nil {
+			return err
+	}
+	_, err = db.Exec(queryStr, id)
+	return err
+
 }

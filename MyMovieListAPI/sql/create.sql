@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS Users (
 CREATE TABLE IF NOT EXISTS Lists (
   id serial,
   owner varchar (128) NOT NULL,
+  name varchar(128) NOT NULL,
   public boolean NOT NULL DEFAULT FALSE,
   items json NOT NULL DEFAULT '[]',
   PRIMARY KEY (id),

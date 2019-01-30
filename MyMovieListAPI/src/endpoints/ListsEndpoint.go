@@ -27,7 +27,7 @@ Get the lists for a user
 */
 func getListsForUser(uid string) ([]m.List, error) {
 	queryStr := `
-	SELECT id, public, items FROM lists WHERE
+	SELECT id, name, public, items FROM lists WHERE
 	owner=$1
 	`
 	db, err := sql.Open("postgres", u.ConnStr())
@@ -39,13 +39,15 @@ func getListsForUser(uid string) ([]m.List, error) {
 	for rows.Next() {
 		var (
 			id     int
+			name   string
 			public bool
 			items  string
 		)
-		if err := rows.Scan(&id, &public, &items); err != nil {
+		if err := rows.Scan(&id, &name, &public, &items); err != nil {
 			return nil, err
 		}
 		thisList := m.List{ Id:     id,
+												Name:   name,
 												Owner:  uid,
 			                  Public: public }
 		err := json.Unmarshal([]byte(items), &thisList.Items)
