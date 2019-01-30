@@ -54,6 +54,9 @@ func AddItems(items []listItem, l List) List {
 	return l
 }
 
+/*
+Read a list from the database by id
+*/
 func ReadList(id int) (List, error) {
 	queryStr := `
 	SELECT owner, name, public, items FROM lists WHERE
@@ -67,10 +70,12 @@ func ReadList(id int) (List, error) {
 	var itemsJSON string
 	err = db.QueryRow(queryStr, id).Scan(&l.Owner, &l.Name, &l.Public, &itemsJSON)
 	err = json.Unmarshal([]byte(itemsJSON), &l.Items)
-	log.Println(l.Name)
 	return l, err
 }
 
+/*
+Write a list to the database
+*/
 func (l List) WriteList() error {
 	itemsBytes, err := json.Marshal(l.Items)
 	if err != nil {
@@ -79,16 +84,17 @@ func (l List) WriteList() error {
 	itemsStr := string(itemsBytes[:])
 	queryStr := `
 	UPDATE lists
-	SET public=$1,
-			items=$2
+	SET name=$1,
+	    public=$2,
+			items=$3
 	WHERE
-	id=$3
+	id=$4
 	`
 	db, err := sql.Open("postgres", u.ConnStr())
 	if err != nil {
 		return err
 	}
-	_, err = db.Exec(queryStr, l.Public, itemsStr, l.Id)
+	_, err = db.Exec(queryStr, l.Name, l.Public, itemsStr, l.Id)
 	return err
 }
 

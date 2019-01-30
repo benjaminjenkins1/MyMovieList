@@ -6,7 +6,6 @@ import (
 	"errors"
 	u "util"
 	m "model"
-	"log"
 )
 
 type ListOptionsRequest struct {
@@ -25,10 +24,6 @@ func ListOptionsEndpoint(r *http.Request, id string) ([]byte, error) {
 	if err != nil {
 		return []byte("{}"), errors.New("List options: error decoding request")
 	}
-
-	log.Println(listOptionsRequest.Id)
-	log.Println(listOptionsRequest.Name)	
-	log.Println(listOptionsRequest.Public)
 
 	l, err := m.ReadList(listOptionsRequest.Id)
 	if err != nil {
