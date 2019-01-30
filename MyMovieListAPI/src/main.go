@@ -50,7 +50,7 @@ func main() {
 	http.HandleFunc("/user",			     		Endpoint(e.UserEndpoint,           http.MethodGet ))
   http.HandleFunc("/updateuser",     	  Endpoint(e.UpdateUserEndpoint,	   http.MethodPost))
 	http.HandleFunc("/lists", 				 		Endpoint(e.ListsEndpoint,					 http.MethodGet ))
-	http.HandleFunc("/list",  				 		Endpoint(e.ListEndpoint,					 http.MethodPost))
+	http.HandleFunc("/list",  				 		Endpoint(e.ListEndpoint,					 http.MethodGet ))
 	http.HandleFunc("/addtolist", 		 		Endpoint(e.AddToListEndpoint,			 http.MethodPost))
 	http.HandleFunc("/removefromlist", 		Endpoint(e.RemoveFromListEndpoint, http.MethodPost))
   http.HandleFunc("/createlist", 		 		Endpoint(e.CreateListEndpoint,		 http.MethodPost))

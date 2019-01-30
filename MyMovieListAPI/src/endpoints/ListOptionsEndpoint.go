@@ -29,6 +29,9 @@ func ListOptionsEndpoint(r *http.Request, id string) ([]byte, error) {
 	if err != nil {
 		return []byte("{}"), errors.New("List options: error reading list")
 	}
+	if l.Owner != id {
+		return []byte("{}"), errors.New("List options: user does not own list")
+	}
 
 	l.Name   = listOptionsRequest.Name
 	l.Public = listOptionsRequest.Public
@@ -36,7 +39,7 @@ func ListOptionsEndpoint(r *http.Request, id string) ([]byte, error) {
 	err = l.WriteList()
 	u.Check(err)
 
-	res, err := ListsEndpoint(r, id)
-	return res, err
+	listBytes, err := json.Marshal(l)
+	return listBytes, err
 
 }

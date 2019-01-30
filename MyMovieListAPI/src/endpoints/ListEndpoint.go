@@ -5,6 +5,7 @@ import (
 	m "model"
 	"encoding/json"
 	"errors"
+	"strconv"
 )
 
 type ListRequest struct {
@@ -12,12 +13,12 @@ type ListRequest struct {
 }
 
 func ListEndpoint(r *http.Request, id string) ([]byte, error) {
-	listRequest := ListRequest{}
-	err := json.NewDecoder(r.Body).Decode(&listRequest)
-	if err != nil {
-		return []byte("{}"), errors.New("Get list: error decoding request")
-	}
-	l, err := m.ReadList(listRequest.Id)
+	
+	listIdString := r.URL.Query()["id"][0]
+	
+	listId, _ := strconv.Atoi(listIdString)
+
+	l, err := m.ReadList(listId)
 	if err != nil {
 		return []byte("{}"), errors.New("Get list: error reading list")
 	}
