@@ -73,6 +73,7 @@ Request body:
   "items":[
     {
       "id":ID
+    }
   ]
 }
 ```
