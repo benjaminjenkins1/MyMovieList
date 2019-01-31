@@ -48,7 +48,7 @@ func main() {
 	stateConfig := gologin.DefaultCookieConfig
 
 	http.HandleFunc("/user",			     		Endpoint(e.UserEndpoint,           http.MethodGet ))
-  http.HandleFunc("/updateuser",     	  Endpoint(e.UpdateUserEndpoint,	   http.MethodPost))
+  http.HandleFunc("/useroptions",     	Endpoint(e.UserOptionsEndpoint,	   http.MethodPost))
 	http.HandleFunc("/lists", 				 		Endpoint(e.ListsEndpoint,					 http.MethodGet ))
 	http.HandleFunc("/list",  				 		Endpoint(e.ListEndpoint,					 http.MethodGet ))
 	http.HandleFunc("/addtolist", 		 		Endpoint(e.AddToListEndpoint,			 http.MethodPost))

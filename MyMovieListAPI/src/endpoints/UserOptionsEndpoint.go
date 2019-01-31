@@ -9,18 +9,18 @@ import (
 )
 
 
-type UpdateRequest struct {
+type UserOptionsRequest struct {
 	Public bool `json: "public"`
 }
 
 /*
 A user can make their profile public or private
 */
-func UpdateUserEndpoint(r *http.Request, id string) ([]byte, error) {
+func UserOptionsEndpoint(r *http.Request, id string) ([]byte, error) {
 	var err error
 	user, err := m.ReadUser(id)
 	u.Check(err)
-	updateRequest := UpdateRequest{}
+	updateRequest := UserOptionsRequest{}
 	err = json.NewDecoder(r.Body).Decode(&updateRequest)
 	u.Check(err)
 	user.Public = updateRequest.Public

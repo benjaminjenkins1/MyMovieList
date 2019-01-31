@@ -6,10 +6,13 @@ import (
 	"database/sql"
 	_ "github.com/lib/pq"
 	u "util"
-	"log"
 )
 
-type listItem struct {
+/*
+Id and DateAdded should not be changed
+All other fields can be changed without updating other code or the database
+*/
+type ListItem struct {
 	Id 				 int 		   `json:"id"`
 	Title 		 string    `json:"title"`
 	PosterPath string    `json:"posterPath"`
@@ -24,7 +27,7 @@ type List struct {
 	Name   string 		`json:"name"`
 	Owner  string  		`json:"owner"`
 	Public bool				`json:"public"`
-	Items  []listItem `json:"items"`
+	Items  []ListItem `json:"items"`
 }
 
 
@@ -34,21 +37,38 @@ func NewList(owner string) List {
 }
 
 /*
-Add an item to a list's Items if an item with its Id does not already eexist
+Add items to a list's Items
+Replaces the item if it already exists
 */
-func AddItems(items []listItem, l List) List {
-	for _, item := range items {
-		item.DateAdded = time.Now().String()
+func AddItems(items []ListItem, l List) List {
+	for i := 0; i < len(items); i++ {
+		items[i].DateAdded = time.Now().String()
 	}
 	for _, item := range items {
 		exists := false
-		for _, existingItem := range l.Items {
+		for i, existingItem := range l.Items {
 			if item.Id == existingItem.Id {
 				exists = true
+				l.Items[i] = item
 			}
 		}
 		if !exists {
 			l.Items = append(l.Items, item)
+		}
+	}
+	return l
+}
+
+
+/*
+Remove ListItems from a List by Id
+*/
+func RemoveItems(items []ListItem, l List) List {
+	for _, item := range items {
+		for i, existingItem := range l.Items {
+			if existingItem.Id == item.Id {
+				l.Items = append(l.Items[:i], l.Items[i+1:]...)
+			}
 		}
 	}
 	return l
@@ -103,8 +123,6 @@ Insert a new list into the database with a unique id and any items the list stru
 List is always private by default
 */
 func (l List) InsertAsNewList() error {
-
-	log.Println(l.Name)
 	
 	queryStr := `
 	INSERT INTO lists (owner, name, items) VALUES
