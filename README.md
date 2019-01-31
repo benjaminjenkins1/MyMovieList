@@ -16,6 +16,12 @@ GET:
 
 POST:
 - /useroptions
+Request body:
+```
+{
+  "public":true
+}
+```
 - /createlist
 - /deletelist
 - /listoptions
