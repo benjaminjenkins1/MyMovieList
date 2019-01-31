@@ -13,8 +13,10 @@ import (
 	"github.com/kataras/go-sessions/sessiondb/redis/service"
 	"github.com/dghubble/gologin"
 	"github.com/dghubble/gologin/facebook"
+	"github.com/dghubble/gologin/google"
 	"golang.org/x/oauth2"
 	facebookOAuth2 "golang.org/x/oauth2/facebook"
+	googleOAuth2 "golang.org/x/oauth2/google"
 )
 
 var redisDB = redis.New(service.Config{
@@ -38,12 +40,19 @@ func main() {
 
 	sess.UseDatabase(redisDB)
 
-	oauth2Config := &oauth2.Config{
+	fbOauth2Config := &oauth2.Config{
 		ClientID:     os.Getenv("FB_CLIENT_ID"),
 		ClientSecret: os.Getenv("FB_CLIENT_SECRET"),
 		RedirectURL:  "https://mymovielist.benjen.me/facebook/callback",
 		Endpoint:     facebookOAuth2.Endpoint,
 		Scopes:       []string{"email"},
+	}
+	googleOauth2Config := &oauth2.Config{
+		ClientID:     os.Getenv("GOOGLE_CLIENT_ID"),
+		ClientSecret: os.Getenv("GOOGLE_CLIENT_SECRET"),
+		RedirectURL:  "https://mymovielist.benjen.me/google/callback",
+		Endpoint:     googleOAuth2.Endpoint,
+		Scopes:       []string{"profile", "email"},
 	}
 	stateConfig := gologin.DefaultCookieConfig
 
@@ -58,8 +67,12 @@ func main() {
 	http.HandleFunc("/listoptions", 	    Endpoint(e.ListOptionsEndpoint,		 http.MethodPost))
 	http.HandleFunc("/logout",						logoutHandler)
 
-	http.Handle("/facebook/login", 	  facebook.StateHandler(stateConfig, facebook.LoginHandler(oauth2Config, nil)))
-	http.Handle("/facebook/callback", facebook.StateHandler(stateConfig, facebook.CallbackHandler(oauth2Config, fbIssueSession(), nil)))
+	http.Handle("/facebook/login", 	  facebook.StateHandler(stateConfig, facebook.LoginHandler(fbOauth2Config, nil)))
+	http.Handle("/facebook/callback", facebook.StateHandler(stateConfig, facebook.CallbackHandler(fbOauth2Config, fbIssueSession(), nil)))
+
+	http.Handle("/google/login",      google.StateHandler(stateConfig, google.LoginHandler(googleOauth2Config, nil)))
+	http.Handle("/google/callback",   google.StateHandler(stateConfig, google.CallbackHandler(googleOauth2Config, googleIssueSession(), nil)))
+
 
 	serverAddress :=  os.Getenv("HOST") + ":" + os.Getenv("PORT")
 	fmt.Printf("Listening on %s...\n", serverAddress)
@@ -132,6 +145,32 @@ func fbIssueSession() http.Handler {
 		s.Set("loggedIn", true)
 		s.Set("id", user.Id)
 		w.WriteHeader(http.StatusOK)
+		log.Println(user.Username, "logged in with Facebook")
+	}
+	return http.HandlerFunc(fn)
+}
+
+func googleIssueSession() http.Handler {
+	fn := func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
+		googleUser, err := google.UserFromContext(ctx)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		user := m.NewUser(googleUser.Id)
+		user.Username = googleUser.Name
+		user.LoginType = "google"
+		err = user.WriteUser()
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		s := sess.Start(w, r)
+		s.Set("loggedIn", true)
+		s.Set("id", user.Id)
+		w.WriteHeader(http.StatusOK)
+		log.Println(user.Username, "logged in with Google")
 	}
 	return http.HandlerFunc(fn)
 }
