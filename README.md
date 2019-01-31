@@ -15,7 +15,7 @@ GET:
 - /logout
 
 POST:
-- /useroptions
+- /useroptions  
 Request body:
 ```
 {
