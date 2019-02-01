@@ -20,7 +20,7 @@ JSON interface offering the following endpoints:
 Request body:
 ```
 {
-  "public":true
+  "public":[bool]
 }
 ```
 - /createlist
@@ -28,7 +28,7 @@ Request body:
 Request body:
 ```
 {
-  "name":"NAME"
+  "name":[string]
 }
 ```
 - /deletelist
@@ -36,7 +36,7 @@ Request body:
 Request body:
 ```
 {
-  "id":ID
+  "id":[int]
 }
 ```
 - /listoptions
@@ -44,8 +44,8 @@ Request body:
 Request body:
 ```
 {
-  "public":true
-  "name":"NAME"
+  "public":[bool]
+  "name":[string]
 }
 ```
 - /addtolist
@@ -55,12 +55,12 @@ Request body:
 {
   "items":[
     {
-      "id":ID,
-      "title":"TITLE",
-      "posterPath":"POSTER_PATH",
-      "status":"STATUS",
-      "runtime":RUNTIME,
-      "overview":"OVERVIEW"
+      "id":[int],
+      "title":[string],
+      "posterPath":[string],
+      "status":[string],
+      "runtime":[int],
+      "overview":[string]
     }
   ]
 }
@@ -72,7 +72,7 @@ Request body:
 {
   "items":[
     {
-      "id":ID
+      "id":[int]
     }
   ]
 }

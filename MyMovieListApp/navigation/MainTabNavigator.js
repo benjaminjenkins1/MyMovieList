@@ -14,13 +14,18 @@ const ListsStack = createStackNavigator({
 });
 
 ListsStack.navigationOptions = {
-  tabBarLabel: 'Lists',
+  tabBarLabel: ({ focused }) => (
+    <TabBarLabel
+      focused={focused}
+      title='Lists'
+    />
+  ),
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
       name={Platform.OS === 'ios' ? 'ios-list' : 'md-list'}
     />
-  ),
+  )
 };
 
 const SearchStack = createStackNavigator({
@@ -28,7 +33,12 @@ const SearchStack = createStackNavigator({
 });
 
 SearchStack.navigationOptions = {
-  tabBarLabel: 'Search',
+  tabBarLabel: ({ focused }) => (
+    <TabBarLabel
+      focused={focused}
+      title='Search'
+    />
+  ),
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
@@ -55,18 +65,21 @@ SettingsStack.navigationOptions = {
       focused={focused}
       name={Platform.OS === 'ios' ? 'ios-settings' : 'md-settings'}
     />
-  ),
+  )
 };
 
-export default createBottomTabNavigator({
-  ListsStack,
-  SearchStack,
-  SettingsStack
-},
-{
-  tabBarOptions : {
-    style: {
-      backgroundColor: Colors.tabBar,
-    }
+
+export default createBottomTabNavigator(
+  {
+    ListsStack,
+    SearchStack,
+    SettingsStack
+  },
+  {
+    tabBarOptions: {
+      style: {
+        backgroundColor: Colors.tabBar
+      }
+    }  
   }
-});
+);

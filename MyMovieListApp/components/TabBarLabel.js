@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text } from 'react-native';
+import Colors from '../constants/Colors';
 
 export default function TabBarLabel(props) {
   return(
@@ -11,9 +12,10 @@ const styles = StyleSheet.create({
   tabBarLabel: {
     paddingBottom: 6,
     fontSize: 10,
-    textAlign: 'center'
+    textAlign: 'center',
+    color: Colors.tabIconDefault
   },
   tabBarLabelActive: {
-    color: 'red'
+    color: Colors.tintColor
   }
 });
