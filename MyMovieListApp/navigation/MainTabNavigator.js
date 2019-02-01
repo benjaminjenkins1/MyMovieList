@@ -3,28 +3,14 @@ import { Platform } from 'react-native';
 import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
 
 import TabBarIcon from '../components/TabBarIcon';
-import HomeScreen from '../screens/HomeScreen';
-import LinksScreen from '../screens/LinksScreen';
+import TabBarLabel from '../components/TabBarLabel';
+import ListsScreen from '../screens/ListsScreen';
+import SearchScreen from '../screens/SearchScreen';
 import SettingsScreen from '../screens/SettingsScreen';
-
-const HomeStack = createStackNavigator({
-  Home: HomeScreen,
-});
-
-HomeStack.navigationOptions = {
-  tabBarLabel: 'Home',
-  tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={
-        Platform.OS === 'ios' ? 'ios-home' : 'md-home'
-      }
-    />
-  ),
-};
+import Colors from '../constants/Colors';
 
 const ListsStack = createStackNavigator({
-  Lists: ListsScreen,
+  Lists: ListsScreen
 });
 
 ListsStack.navigationOptions = {
@@ -32,13 +18,13 @@ ListsStack.navigationOptions = {
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
-      name={Platform.OS === 'ios' ? 'ios-list?' : 'md-list'}
+      name={Platform.OS === 'ios' ? 'ios-list' : 'md-list'}
     />
   ),
 };
 
 const SearchStack = createStackNavigator({
-  Search: SearchScreen,
+  Search: SearchScreen
 });
 
 SearchStack.navigationOptions = {
@@ -53,23 +39,34 @@ SearchStack.navigationOptions = {
   ),
 };
 
-const ProfileStack = createStackNavigator({
-  Profile: SettingsScreen,
+const SettingsStack = createStackNavigator({
+  Settings: SettingsScreen
 });
 
-ProfileStack.navigationOptions = {
-  tabBarLabel: 'Profile',
+SettingsStack.navigationOptions = {
+  tabBarLabel: ({ focused }) => (
+    <TabBarLabel
+      focused={focused}
+      title='Settings'
+    />
+  ),
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
-      name={Platform.OS === 'ios' ? 'ios-person' : 'md-person'}
+      name={Platform.OS === 'ios' ? 'ios-settings' : 'md-settings'}
     />
   ),
 };
 
 export default createBottomTabNavigator({
-  HomeStack,
   ListsStack,
   SearchStack,
-  ProfileStack,
+  SettingsStack
+},
+{
+  tabBarOptions : {
+    style: {
+      backgroundColor: Colors.tabBar,
+    }
+  }
 });
