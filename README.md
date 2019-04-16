@@ -6,7 +6,7 @@ React native app which consumes the public MyMovieList API at mymovielist.benjen
 
 ## API
 
-JSON interface offering the following endpoints:
+JSON interface with the following endpoints:
 
 ### GET:
 #### /user?id=[ID]
