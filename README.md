@@ -78,7 +78,7 @@ Request body:
 }
 ```
 
-### Google and Facebook login:
+### Google and Facebook authentication:
 #### /facebook/login
 #### /facebook/callback
 #### /google/login
