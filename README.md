@@ -9,9 +9,9 @@ React native app which consumes the public MyMovieList API at mymovielist.benjen
 JSON interface offering the following endpoints:
 
 ### GET:
-#### /user[id=ID]
+#### /user?id=[ID]
 #### /lists
-#### /list?id=ID
+#### /list?id=[ID]
 #### /logout
 
 ### POST:
@@ -79,7 +79,7 @@ Request body:
 ```
 
 ### Google and Facebook login:
-- /facebook/login
-- /facebook/callback
-- /google/login
-- /google/callback
+#### /facebook/login
+#### /facebook/callback
+#### /google/login
+#### /google/callback
